@@ -1,4 +1,5 @@
 import os
+import time
 import inspect
 import json
 from ruamel import yaml
@@ -242,6 +243,8 @@ class IntentGenerator(SchemaHandler):
             intent.id = self.grab_id(intent.name)
             intent = self.push_intent(intent)
             schema.append(intent.__dict__)
+            print('Sleeping for a second...')
+            time.sleep(1)
         self.dump_schema(schema)
 
 
