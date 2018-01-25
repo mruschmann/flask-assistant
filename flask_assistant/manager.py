@@ -52,7 +52,7 @@ class ContextManager():
         return context
 
     def get_param(self, context_name, param):
-        return self._cache[context_name].parameters[param]
+        return self._cache[context_name].parameters.get(param)
 
     def update(self, contexts_json):
         for obj in contexts_json:
