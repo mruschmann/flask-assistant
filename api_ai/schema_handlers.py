@@ -157,8 +157,8 @@ class IntentGenerator(SchemaHandler):
             param_info = {}
 
             param_entity = param_entity_map.get(arg, arg)
-            param_name = param_entity.replace('sys.', '')
-            # param_name = arg
+            # param_name = param_entity.replace('sys.', '')
+            param_name = arg
 
             param_info['name'] = param_name
             param_info['value'] = '$' + param_name

@@ -86,9 +86,9 @@ class Intent():
             return True
 
 
-    def add_example(self, phrase, templ_entity_map=None):  # TODO
+    def add_example(self, phrase, templ_entity_map=None, parameters=None):  # TODO
         if templ_entity_map:
-            example = UserDefinedExample(phrase, templ_entity_map)
+            example = UserDefinedExample(phrase, templ_entity_map, self.responses[0]['parameters'])
         else:
             example = AutoAnnotedExamle(phrase)
 
@@ -148,10 +148,11 @@ class AutoAnnotedExamle(ExampleBase):
 
 class UserDefinedExample(ExampleBase):
 
-    def __init__(self, phrase, entity_map):
+    def __init__(self, phrase, entity_map, parameters):
         super(UserDefinedExample, self).__init__(phrase, user_defined=True)
         # import ipdb; ipdb.set_trace()
         self.entity_map = entity_map
+        self.parameters = parameters
 
         self._parse_phrase(self.text)
 
@@ -175,10 +176,21 @@ class UserDefinedExample(ExampleBase):
 
         Annotations are created using the entity map within the user_says.yaml template.
         """
+        word_list = self.entity_map[word].split(':')
         annotation = {}
         annotation['text'] = word
-        annotation['meta'] = '@' + self.entity_map[word]
-        annotation['alias'] = self.entity_map[word].replace('sys.', '')
+        annotation['meta'] = '@' + word_list[0]
+        if len(word_list) > 1:
+            annotation['alias'] = word_list[1]
+        else:
+            found = False
+            for param in self.parameters:
+                if param['dataType'] == annotation['meta']:
+                    annotation['alias'] = param['name']
+                    found = True
+                    break
+            if not found:
+                word_list[0].replace('sys.', '')
         annotation['userDefined'] = True
         self.data.append(annotation)
 
